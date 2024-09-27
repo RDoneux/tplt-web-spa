@@ -1,0 +1,57 @@
+pipeline {
+    
+    agent any
+
+    stages {
+
+        stage ("Setup") {
+            echo "setup"
+            post {
+                success {
+                    echo "Setup success"
+                }
+                failure {
+                    echo "Setup failure"
+                }
+            }
+        }
+
+        stage ("Build") {
+            echo "build"
+            post {
+                success {
+                    echo "Build success"
+                }
+                failure {
+                    echo "Build failure"
+                }
+            }
+        }
+
+        stage ("Quality Gate") {
+            echo "quality gate"
+            post {
+                success {
+                    echo "Quality gate success"
+                }
+                failure {
+                    echo "Quality gate failure"
+                }
+            }
+        }
+
+        stage ("Deploy") {
+            echo "deploy"
+                        post {
+                success {
+                    echo "Deploy success"
+                }
+                failure {
+                    echo "Deploy failure"
+                }
+            }
+        }
+
+    }
+
+}
