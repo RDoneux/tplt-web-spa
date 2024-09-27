@@ -1,50 +1,22 @@
-# React + TypeScript + Vite
+# TPLT | Web SPA Template
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a React project with minimal setup with a CI/CD pipeline preconfigured.
 
-Currently, two official plugins are available:
+## Setting up CD
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The CD pipeline is handled by Pulumi, the configuration for which can be found with the iac project.
 
-## Expanding the ESLint configuration
+1. Create an S3 bucket in AWS. This will be used as the Pulumi backend.
+2. Provide AWS environment variables (these can be found in bitwarden under AWS Credentials)
+3. Login to the Pulumi backend `pulumi login "s3://<bucket name including region>"`
+4. Navigate to Pulumi.yaml and update the project name
+5. Depending on the environment you want to build in, either update the values in Pulumi.dev.yaml, or create a new environment stack with corresponding yaml file. `pulumi stack init`
+6. `pulumi up` (the pass phrase can be found in bitwarden under pulumi)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Setting up CI
 
-- Configure the top-level `parserOptions` property like this:
+The CI pipeline is handled by Jenkins, the configuration for which can be found in pipeline/Jenkinsfile.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Create a multi-branch pipeline which points to the GitHub repository
+2. In GitHub, setup a webhook which calls http://81.109.142.168:8080/multibranch-webhook-trigger/invoke?token=<unique_token>.
+3. In Jenkins, add webhook scanning to the project using the unique_token
